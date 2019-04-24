@@ -53,12 +53,7 @@ static uint8_t _i2c_read(uint8_t address, uint8_t cmd) {
   Wire.write(cmd); // control register
   Wire.endTransmission();
 
-  // uglyness as a temporary fix for esp32 wire library which is different than esp8266 version
-  #ifdef _ESP32
   uint8_t readbytes = Wire.requestFrom(address, size, sendStop); // request cnt bytes
-  #else
-  uint8_t readbytes = Wire.requestFrom(address, (size_t)size, (bool)sendStop); // request cnt bytes
-  #endif
 
   result  = Wire.read();
 
@@ -91,7 +86,7 @@ void PCA9633::begin(uint8_t devAddr, uint8_t fade_delay) { // set device address
   chipinit(); // setup chip
   setFade(fade_delay);
 }
-
+#if 0
 void PCA9633::begin(uint8_t devAddr, uint8_t fade_delay, uint8_t i2c_init) { // set device address, fade delay and init i2c using defaults
   pcaAddr = devAddr;
   chipinit(); // setup chip
@@ -100,6 +95,7 @@ void PCA9633::begin(uint8_t devAddr, uint8_t fade_delay, uint8_t i2c_init) { // 
     Wire.begin();
   }
 }
+#endif
 
 void PCA9633::setrgbw(uint8_t p0, uint8_t p1, uint8_t p2, uint8_t p3) {
   _i2c_write(_pcaAddr, PWM0, linearize(p0));
